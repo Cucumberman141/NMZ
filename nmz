@@ -1,0 +1,61 @@
+import com.sun.java.browser.plugin2.DOM;
+import org.rspeer.runetek.adapter.component.InterfaceComponent;
+import org.rspeer.runetek.adapter.scene.Npc;
+import org.rspeer.runetek.api.commons.StopWatch;
+import org.rspeer.runetek.api.commons.Time;
+import org.rspeer.runetek.api.commons.math.Random;
+import org.rspeer.runetek.api.component.Interfaces;
+import org.rspeer.runetek.api.component.tab.Combat;
+import org.rspeer.runetek.api.component.tab.Inventory;
+import org.rspeer.runetek.api.component.tab.Prayer;
+import org.rspeer.runetek.api.component.tab.Prayers;
+import org.rspeer.runetek.api.local.Health;
+import org.rspeer.runetek.api.scene.Npcs;
+import org.rspeer.runetek.api.scene.Players;
+import org.rspeer.runetek.event.listeners.TickListener;
+import org.rspeer.runetek.event.types.TickEvent;
+import org.rspeer.script.Script;
+import org.rspeer.script.ScriptCategory;
+import org.rspeer.script.ScriptMeta;
+import org.rspeer.ui.Log;
+
+@ScriptMeta(name = "PrayerFlick", category = ScriptCategory.OTHER, desc = "Flicks prayers", developer = "JRTN", version = 0.1)
+public class SmitherMain extends Script {//implements {//TickListener {
+
+
+    Npc DOMINIC = Npcs.getNearest(x -> x.getName().equals("Dominic Onion"));
+    @Override
+    public int loop() {
+        InterfaceComponent QUICK = Interfaces.getComponent(160, 14);
+
+        if (Prayers.getPoints() > 0){
+        Prayers.flick(Prayer.RAPID_HEAL, Random.high(300, 600));
+        Time.sleep(10000, 12000);
+        Log.info("Toggling rapid heal");
+        }
+
+        if (!Combat.isAutoRetaliateOn()){
+            Combat.toggleAutoRetaliate(true);
+        }
+
+        if (Health.getCurrent() >= 51 && Inventory.contains("Overload (")){
+            Inventory.getFirst("Overload (").interact("Drink");
+        }
+
+        if (DOMINIC != null){
+            setStopping(true);
+        }
+
+
+        return Random.high(50, 100);
+    }
+
+    /*@Override
+    public void notify(TickEvent tickEvent) {
+        InterfaceComponent QUICK = Interfaces.getComponent(160, 14);
+        if(Prayers.isQuickPrayerActive() && QUICK.isVisible() && QUICK != null) {
+            QUICK.click();
+            Log.info("Turning off");
+        }
+    }*/
+}
